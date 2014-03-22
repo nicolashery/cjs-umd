@@ -1,0 +1,20 @@
+# Folder view configuration files
+.DS_Store
+Desktop.ini
+
+# Files used by IntelliJ
+*.iml
+.idea
+
+# Thumbnail cache files
+._*
+Thumbs.db
+
+# Files that might appear on external disks
+.Spotlight-V100
+.Trashes
+
+# Application specific files
+node_modules
+examples/browserify/bundle.js
+examples/requirejs/bundle.js
