@@ -8,7 +8,7 @@ var defaults = {
   dependencies: [],
   transform: [],
   quoteChar: '\'',
-  headTemplate: 'templates/head.js',
+  headTemplate: path.join(__dirname, 'templates/head.js'),
   requireDepFunctionName: '_requireDep',
   oldHeadLengthNoExports: 270
 };
@@ -115,7 +115,7 @@ function bundle(options, cb) {
       return cb(err);
     }
 
-    var templatePath = path.join(__dirname, options.headTemplate);
+    var templatePath = options.headTemplate;
     fs.readFile(templatePath, function(err, template) {
       if (err) {
         return cb(err);
