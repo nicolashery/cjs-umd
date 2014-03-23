@@ -1,16 +1,15 @@
 var fs = require('fs');
-var path = require('path');
 var _ = require('lodash');
 var cjs = require('pure-cjs');
 var replaceStream = require('replacestream');
+var wrap = require('umd-wrap');
 
 var defaults = {
   dependencies: [],
   transform: [],
   quoteChar: '\'',
-  headTemplate: path.join(__dirname, 'templates/head.js'),
   requireDepFunctionName: '_requireDep',
-  oldHeadLengthNoExports: 270
+  pureCjsTailLengthToReplace: 19
 };
 
 function applyDefaults(options) {
@@ -18,7 +17,7 @@ function applyDefaults(options) {
 }
 
 function checkOptions(options) {
-  var required = ['input', 'output', 'exports'];
+  var required = ['input', 'output'];
   _.forEach(required, function(name) {
     if (!options[name]) {
       throw new Error('`options.' + name + '` is required by CJS-UMD Bundler');
@@ -60,48 +59,35 @@ function requireStatement(options, requireFunctionName, dependencyName) {
 }
 
 function cjsTransform(options, cb) {
-  cjs.transform(options).then(function(result) {
+  cjs.transform(cjsOptions(options)).then(function(result) {
     cb(null, result.code);
   }, function (err) {
     cb(err);
   });
 }
 
-function replaceHead(options, template, code) {
-  var oldHeadLength = options.oldHeadLengthNoExports + options.exports.length;
-  var data = headData(options);
-  var head = headContent(options, template, data);
-  return head + code.slice(oldHeadLength);
+function cjsOptions(options) {
+  return _.omit(options, 'exports');
 }
 
-function headContent(options, template, data) {
-  return _.template(template, data);
-}
+function replacePureCjsTail(options, code) {
+  var size = options.pureCjsTailLengthToReplace;
 
-function headData(options) {
-  return {
-    cjsDependencies: _.map(options.dependencies, function(dep) {
-      return 'require(\'' + dep.name + '\')';
-    }).join(', '),
+  // Allow to easily skip this replace by giving a size of 0
+  if (!size) {
+    return code;
+  }
 
-    amdDependencies: _.map(options.dependencies, function(dep) {
-      return '\'' + dep.name + '\'';
-    }).join(', '),
+  if (code.length < size) {
+    throw new Error('Expected code length of at least ' + size);
+  }
 
-    globalAlias: options.exports,
-
-    globalDependencies: _.map(options.dependencies, function(dep) {
-      return 'root[\'' + (dep.exports || dep.name) + '\']';
-    }).join(', '),
-
-    dependencyExports: _.map(options.dependencies, function(dep) {
-      return (dep.exports || dep.name);
-    }).join(', '),
-
-    dependencyNameToExportsMapping: _.map(options.dependencies, function(dep) {
-      return '\'' + dep.name + '\': ' + (dep.exports || dep.name);
-    }).join(', ')
-  };
+  // Just insert a "return" statement
+  return [
+    code.slice(0, code.length - size),
+    ' return ',
+    code.slice(code.length - size)
+  ].join('');
 }
 
 function bundle(options, cb) {
@@ -115,13 +101,14 @@ function bundle(options, cb) {
       return cb(err);
     }
 
-    var templatePath = options.headTemplate;
-    fs.readFile(templatePath, function(err, template) {
+    code = replacePureCjsTail(options, code);
+
+    options.code = code;
+    wrap(options, function(err, code) {
       if (err) {
         return cb(err);
       }
 
-      code = replaceHead(options, template, code);
       fs.writeFile(options.output, code, cb);
     });
   });

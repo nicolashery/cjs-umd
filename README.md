@@ -81,21 +81,18 @@ bundle(options, function(err) {
 
   quoteChar: '\'',
   // Quote character used in your `require()` statements
-  // Default: (')
-
-  headTemplate: 'templates/head.js',
-  // Lo-Dash template used to create the UMD bundle head
-  // Change only if you need a custom one
+  // Default: ('),
 
   requireDepFunctionName: '_requireDep',
-  // Name of function used to require external dependencies
-  // Override only if you are already using that name
+  // Name of function used to require external dependencies by `umd-wrap`
 
-  oldHeadLengthNoExports: 270
-  // Used to replace the pure-cjs UMD head
-  // No reason to touch this, but could be usefull if pure-cjs changes
+  pureCjsTailLengthToReplace: 19
+  // Used to tweak the pure-cjs bundle
+  // No reason to touch this, but could be usefull if `pure-cjs` changes
 }
 ```
+
+Any other options will be passed to [umd-wrap](https://github.com/nicolashery/umd-wrap).
 
 ## How does it work?
 
@@ -103,7 +100,7 @@ bundle(options, function(err) {
 
 2. Everything is compiled into a single bundle thanks to the [pure-cjs](https://github.com/RReverser/pure-cjs) builder.
 
-3. The default pure-js UMD snippet at the head of the bundle is replaced with a custom snippet that includes the require statements for the external dependencies, as well as the definition of the custom `_requireDep()` function.
+3. The pure-cjs bundle is wrapped in a UMD statement using [umd-wrap](https://github.com/nicolashery/umd-wrap).
 
 ## Examples
 
@@ -148,7 +145,7 @@ Create the Browserify bundle:
 
 ```bash
 $ cd examples/browserify/
-$ node make-bundle.js
+$ . make-bundle.sh
 ```
 
 Open the `examples/browserify/index.html` in a browser and look at the console output.
@@ -165,7 +162,7 @@ Create the RequireJS bundle:
 
 ```bash
 $ cd examples/requirejs/
-$ node make-bundle.js
+$ . make-bundle.sh
 ```
 
 Open the `examples/requirejs/index.html` in a browser and look at the console output.
