@@ -1,7 +1,8 @@
 {
   "name": "cjs-umd",
-  "description": "Bundle CommonJS source files into a single UMD file with the option to define external dependencies that will not be included",
   "version": "0.0.0",
+  "private": true,
+  "description": "Bundle CommonJS source files into a single UMD file with the option to define external dependencies that will not be included",
   "bin": {
     "cjs-umd": "bin/cmd.js"
   },
@@ -15,7 +16,7 @@
     "replacestream": "^0.1.3",
     "pure-cjs": "^1.9.2",
     "commander": "^2.1.0",
-    "umd-wrap": "git://github.com/nicolashery/umd-wrap.git"
+    "umd-wrap": "^0.1.0"
   },
   "devDependencies": {
     "moment": "^2.5.1",
