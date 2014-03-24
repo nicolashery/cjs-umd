@@ -12,9 +12,8 @@ program
     'optional list of external dependencies with format <name[:exports]>\n' +
     '\t\t\t\t(ex: --dependencies lodash:_,moment)', parseDependencies)
   .option('-q, --quoteChar <char>')
-  .option('-t, --headTemplate <file>')
   .option('-r, --requireDepFunctionName <string>')
-  .option('-l, --oldHeadLengthNoExports <int>')
+  .option('-l, --pureCjsTailLengthToReplace <int>')
   .parse(process.argv);
 
 if (!program.input) {
