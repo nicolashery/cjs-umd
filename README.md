@@ -166,3 +166,7 @@ $ . make-bundle.sh
 ```
 
 Open the `examples/requirejs/index.html` in a browser and look at the console output.
+
+## License
+
+MIT
