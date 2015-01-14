@@ -1,5 +1,7 @@
 # cjs-umd
 
+## IMPORTANT: Exporting with UMD is now included in [pure-cjs](https://github.com/RReverser/pure-cjs). This repository is deprecated.
+
 Bundle [CommonJS](http://en.wikipedia.org/wiki/CommonJS) source files into a single [UMD](https://github.com/umdjs/umd) file with the option to define external dependencies that will not be included.
 
 ## Why?
